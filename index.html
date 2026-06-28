@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>VANTA — 3D Rendering &amp; Visualisation Studio</title>
+    <meta
+      name="description"
+      content="VANTA is a 3D rendering and visualisation studio crafting photoreal product renders, architectural visualisation and cinematic CGI for luxury and technology brands."
+    />
+    <meta name="theme-color" content="#08080A" />
+    <meta property="og:title" content="VANTA — 3D Rendering & Visualisation Studio" />
+    <meta property="og:description" content="Photoreal product, architecture and cinematic CGI for luxury and technology brands." />
+    <meta property="og:type" content="website" />
+    <!-- Self-hosted font preloads are injected in src/style.css / step 2 -->
+  </head>
+  <body>
+    <!-- The continuous 3D world. Decorative; the DOM below is fully usable without it. -->
+    <canvas id="webgl" aria-hidden="true"></canvas>
+
+    <!-- Tiny progress rail mirrors the camera's descent through the world -->
+    <div class="rail" aria-hidden="true"><span class="rail__fill"></span></div>
+
+    <main id="ui">
+      <!-- 1 — HERO -->
+      <section class="section section--hero" id="hero" data-section="hero">
+        <header class="brand">
+          <span class="brand__mark">VANTA</span>
+          <span class="brand__meta">Rendering &amp; Visualisation</span>
+        </header>
+        <div class="hero__copy">
+          <h1 class="hero__title">The render<br />is the&nbsp;product.</h1>
+          <p class="hero__line">
+            Photoreal product, architecture and cinematic CGI for luxury and technology brands.
+          </p>
+        </div>
+        <div class="scrollcue" aria-hidden="true">
+          <span class="scrollcue__label">Scroll</span>
+          <span class="scrollcue__line"></span>
+        </div>
+      </section>
+
+      <!-- 2 — WORK -->
+      <section class="section section--work" id="work" data-section="work">
+        <div class="section__head">
+          <span class="section__index">01 — Work</span>
+          <h2 class="section__title">Selected work</h2>
+          <p class="section__lede">
+            A handful of recent commissions. Each one rendered, lit and graded in-house.
+          </p>
+        </div>
+        <ol class="work__list" id="work-list">
+          <!-- Project rows are populated from src/ui/content.ts -->
+        </ol>
+      </section>
+
+      <!-- 3 — CAPABILITIES -->
+      <section class="section section--capabilities" id="capabilities" data-section="capabilities">
+        <div class="section__head">
+          <span class="section__index">02 — Capabilities</span>
+          <h2 class="section__title">What we make</h2>
+        </div>
+        <ul class="caps__list" id="caps-list">
+          <!-- Capability rows are populated from src/ui/content.ts -->
+        </ul>
+      </section>
+
+      <!-- 4 — STUDIO -->
+      <section class="section section--studio" id="studio" data-section="studio">
+        <div class="section__head">
+          <span class="section__index">03 — Studio</span>
+        </div>
+        <div class="studio__copy" id="studio-copy">
+          <!-- Studio copy is populated from src/ui/content.ts -->
+        </div>
+      </section>
+
+      <!-- 5 — CONTACT -->
+      <section class="section section--contact" id="contact" data-section="contact">
+        <div class="section__head">
+          <span class="section__index">04 — Contact</span>
+          <h2 class="section__title">Start a project</h2>
+        </div>
+        <form class="enquiry" id="enquiry" novalidate>
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="f-company">Company</label>
+            <input id="f-company" name="company" type="text" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="f-scope">Discipline</label>
+            <select id="f-scope" name="scope">
+              <option value="product">Product rendering</option>
+              <option value="archviz">Architectural visualisation</option>
+              <option value="cgi">Cinematic CGI</option>
+              <option value="realtime">Real-time / WebGL</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+          <div class="field field--wide">
+            <label for="f-message">Project</label>
+            <textarea id="f-message" name="message" rows="4" required></textarea>
+          </div>
+          <button class="enquiry__submit" type="submit">
+            <span>Send enquiry</span>
+          </button>
+          <p class="enquiry__status" id="enquiry-status" role="status" aria-live="polite"></p>
+        </form>
+        <footer class="colophon">
+          <span>VANTA Studio</span>
+          <span>© <span id="year"></span></span>
+        </footer>
+      </section>
+    </main>
+
+    <!-- Shown only if WebGL is unavailable; otherwise hidden -->
+    <noscript>
+      <style>#webgl { display: none; }</style>
+    </noscript>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
