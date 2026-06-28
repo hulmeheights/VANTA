@@ -70,7 +70,6 @@ export class Monolith {
     this.material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
-      defines: { PREVIEW: '' }, // self-tonemap until the composer is wired (step 4)
       uniforms: {
         uTime: { value: 0 },
         uBreathAmp: { value: 0.016 },

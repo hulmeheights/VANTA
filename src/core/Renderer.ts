@@ -1,7 +1,7 @@
 import {
   WebGLRenderer,
-  PCFSoftShadowMap,
-  ACESFilmicToneMapping,
+  PCFShadowMap,
+  NoToneMapping,
   SRGBColorSpace,
 } from 'three'
 import { palette } from './palette'
@@ -28,12 +28,13 @@ export function createRenderer(canvas: HTMLCanvasElement, quality: Quality): Web
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality.dprCap))
   renderer.setClearColor(palette.bg, 1)
   renderer.outputColorSpace = SRGBColorSpace
-  // Preview tonemap; switches to NoToneMapping once the composer's grade pass owns it.
-  renderer.toneMapping = ACESFilmicToneMapping
+  // Tonemapping is owned by the composer's grade chain (ACES), so the renderer
+  // outputs linear into the half-float composer target.
+  renderer.toneMapping = NoToneMapping
 
   if (quality.softShadows) {
     renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = PCFSoftShadowMap
+    renderer.shadowMap.type = PCFShadowMap
     renderer.shadowMap.autoUpdate = true
   }
 

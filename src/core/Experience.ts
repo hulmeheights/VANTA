@@ -5,6 +5,7 @@ import { Time } from './Time'
 import { palette } from './palette'
 import type { Quality } from './tier'
 import { World } from '../world/World'
+import { Post } from '../post/Post'
 
 // Top-level orchestrator. Owns the renderer, the single persistent scene, the one
 // travelling camera, the world (scene graph) and the render loop. Everything else
@@ -17,6 +18,7 @@ export class Experience {
   readonly camera: PerspectiveCamera
   readonly renderer: WebGLRenderer
   readonly world: World
+  readonly post: Post
 
   private raf = 0
 
@@ -35,6 +37,7 @@ export class Experience {
     this.camera.lookAt(0.4, 0.7, 0) // low, looking slightly up so the monolith looms
 
     this.world = new World(this)
+    this.post = new Post(this.renderer, this.scene, this.camera, quality, [this.world.monolith.mesh])
 
     this.resize()
     window.addEventListener('resize', this.resize)
@@ -47,13 +50,14 @@ export class Experience {
     this.camera.aspect = this.sizes.aspect
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(this.sizes.width, this.sizes.height)
+    this.post.setSize(this.sizes.width, this.sizes.height)
   }
 
   private start(): void {
     const loop = (): void => {
       this.time.tick()
       this.world.update(this.time)
-      this.renderer.render(this.scene, this.camera)
+      this.post.render(this.time.deltaS)
       this.raf = requestAnimationFrame(loop)
     }
     this.raf = requestAnimationFrame(loop)
