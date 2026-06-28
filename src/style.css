@@ -16,8 +16,8 @@
   --maxw: 1340px;
   --gutter: clamp(1.25rem, 5vw, 5rem);
 
-  --serif: "Fraunces", Georgia, "Times New Roman", serif;
-  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -51,6 +51,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
   overflow-x: hidden;
 }
 
@@ -184,11 +185,13 @@ body.no-webgl {
 }
 .hero__title {
   font-family: var(--serif);
-  font-weight: 300;
+  font-weight: 340;
   font-size: clamp(3rem, 11vw, 9.5rem);
-  line-height: 0.97;
+  line-height: 0.96;
   letter-spacing: -0.035em;
-  font-variation-settings: "opsz" 144, "wght" 300;
+  /* High optical size = the dramatic high-contrast editorial cut. */
+  font-variation-settings: "opsz" 144, "wght" 340, "SOFT" 0, "WONK" 0;
+  color: #f2efe9;
 }
 .hero__line {
   margin-top: clamp(1.5rem, 4vh, 2.5rem);

@@ -1,3 +1,9 @@
+// Self-hosted variable fonts (OFL). Fraunces "full" carries the opsz/wght/SOFT/WONK
+// axes the display type drives; Inter "standard" is the latin/latin-ext wght subset
+// for body. Both are served by Vite — no CDN call. Latin is fetched on demand via
+// unicode-range.
+import '@fontsource-variable/fraunces/full.css'
+import '@fontsource-variable/inter/standard.css'
 import './style.css'
 import { detectQuality } from './core/tier'
 import { Experience } from './core/Experience'

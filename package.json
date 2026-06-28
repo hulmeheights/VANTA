@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/fraunces": "^5.2.9",
+    "@fontsource-variable/inter": "^5.2.8",
     "detect-gpu": "^5.0.70",
     "gsap": "^3.13.0",
     "postprocessing": "6.39.2",
