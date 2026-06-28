@@ -31,9 +31,10 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   float vig = 1.0 - uVignette * smoothstep(0.1, 0.75, r);
   c *= vig;
 
-  // Animated monochrome film grain.
+  // Animated monochrome film grain — scaled by luma so deep blacks stay clean.
   float g = hash21(uv * resolution.xy + fract(uTime) * 1000.0) - 0.5;
-  c += g * uGrain;
+  float luma = dot(c, vec3(0.299, 0.587, 0.114));
+  c += g * uGrain * (0.3 + 0.7 * sqrt(luma));
 
   outputColor = vec4(c, inputColor.a);
 }

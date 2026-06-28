@@ -8,7 +8,7 @@ import {
   ToneMappingMode,
   ChromaticAberrationEffect,
 } from 'postprocessing'
-import { HalfFloatType, Vector2, type WebGLRenderer, type Scene, type PerspectiveCamera, type Object3D } from 'three'
+import { HalfFloatType, Vector2, type Vector3, type WebGLRenderer, type Scene, type PerspectiveCamera, type Object3D } from 'three'
 import { GradeEffect } from './GradeEffect'
 import type { Quality } from '../core/tier'
 
@@ -64,7 +64,7 @@ export class Post {
     }
 
     effects.push(new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC }))
-    this.grade = new GradeEffect({ grain: quality.grain ? 0.022 : 0, vignette: 0.72 })
+    this.grade = new GradeEffect({ grain: quality.grain ? 0.032 : 0, vignette: 0.72 })
     effects.push(this.grade)
 
     if (quality.chromaticAberration) {
@@ -80,9 +80,9 @@ export class Post {
     this.composer.addPass(new EffectPass(camera, ...effects))
   }
 
-  /** Drive the DOF focus distance in world units (from scroll progress). */
-  setFocus(worldDistance: number): void {
-    if (this.dof) this.dof.cocMaterial.uniforms.focusDistance.value = worldDistance
+  /** Focus the DOF on a live world-space target (the rig's look point / a slab). */
+  setFocusTarget(target: Vector3): void {
+    if (this.dof) this.dof.target = target
   }
 
   setSize(width: number, height: number): void {
