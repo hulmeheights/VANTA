@@ -1,7 +1,7 @@
 import {
   WebGLRenderer,
   PCFSoftShadowMap,
-  NoToneMapping,
+  ACESFilmicToneMapping,
   SRGBColorSpace,
 } from 'three'
 import { palette } from './palette'
@@ -28,7 +28,8 @@ export function createRenderer(canvas: HTMLCanvasElement, quality: Quality): Web
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality.dprCap))
   renderer.setClearColor(palette.bg, 1)
   renderer.outputColorSpace = SRGBColorSpace
-  renderer.toneMapping = NoToneMapping
+  // Preview tonemap; switches to NoToneMapping once the composer's grade pass owns it.
+  renderer.toneMapping = ACESFilmicToneMapping
 
   if (quality.softShadows) {
     renderer.shadowMap.enabled = true

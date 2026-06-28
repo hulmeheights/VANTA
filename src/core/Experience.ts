@@ -30,9 +30,9 @@ export class Experience {
     // FogExp2 is the base atmosphere; drifting noise billboards (World/Fog) add the churn.
     this.scene.fog = new FogExp2(palette.bg, 0.058)
 
-    this.camera = new PerspectiveCamera(38, this.sizes.aspect, 0.1, 200)
-    this.camera.position.set(0, 0.6, 9)
-    this.camera.lookAt(0, 0.2, 0)
+    this.camera = new PerspectiveCamera(34, this.sizes.aspect, 0.1, 200)
+    this.camera.position.set(0, -0.1, 8.6)
+    this.camera.lookAt(0.4, 0.7, 0) // low, looking slightly up so the monolith looms
 
     this.world = new World(this)
 

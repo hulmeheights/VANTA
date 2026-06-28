@@ -3,51 +3,65 @@ import {
   Mesh,
   MeshStandardMaterial,
   PlaneGeometry,
-  BoxGeometry,
+  PerspectiveCamera,
+  Vector3,
 } from 'three'
 import { Lighting } from './Lighting'
+import { Monolith } from './Monolith'
+import { Fog } from './Fog'
 import { palette } from '../core/palette'
 import type { Experience } from '../core/Experience'
 import type { Time } from '../core/Time'
 
 // The persistent scene graph. Built once, never torn down — sections are reached by
 // moving the camera, not by mounting/unmounting objects.
-//
-// SCAFFOLD STATE: a placeholder slab stands in for the real superquadric monolith
-// (added with its signature shader in the hero step). The contact plane and key
-// light are real and stay.
 
 export class World {
   readonly group = new Group()
   readonly lighting: Lighting
-  private readonly placeholder: Mesh
+  readonly monolith: Monolith
+  readonly fog: Fog
+
+  private readonly camera: PerspectiveCamera
+  private readonly lightPos = new Vector3()
+  private readonly lightDir = new Vector3()
 
   constructor(exp: Experience) {
     exp.scene.add(this.group)
+    this.camera = exp.camera
 
     this.lighting = new Lighting(exp.quality, exp.scene)
 
-    // Contact plane — matte shadow receiver that roots the floating object.
+    // Contact plane — matte shadow receiver that roots the floating monolith.
     const plane = new Mesh(
-      new PlaneGeometry(80, 80),
+      new PlaneGeometry(120, 120),
       new MeshStandardMaterial({ color: palette.bgDeep, roughness: 1, metalness: 0 }),
     )
     plane.rotation.x = -Math.PI / 2
-    plane.position.y = -2.6
+    plane.position.y = -1.65
     plane.receiveShadow = true
     this.group.add(plane)
 
-    // Placeholder monolith.
-    this.placeholder = new Mesh(
-      new BoxGeometry(2, 3, 0.5, 1, 1, 1),
-      new MeshStandardMaterial({ color: 0x0c0c10, roughness: 0.35, metalness: 0.4 }),
-    )
-    this.placeholder.castShadow = true
-    this.group.add(this.placeholder)
+    this.monolith = new Monolith(exp.quality)
+    this.group.add(this.monolith.mesh)
+
+    this.fog = new Fog(exp.quality)
+    this.group.add(this.fog.group)
   }
 
   update(time: Time): void {
-    // Gentle idle so the canvas is visibly alive during scaffold.
-    this.placeholder.rotation.y = Math.sin(time.elapsedS * 0.18) * 0.35
+    this.monolith.update(time.elapsedS)
+
+    // The light barely turns its head: a slow azimuth drift re-rakes the rim.
+    this.lighting.update(-0.5 + Math.sin(time.elapsedS * 0.09) * 0.18)
+
+    // Feed the monolith's custom shader the live direction toward the key light,
+    // and the fog the light's world position so haze pools around it.
+    this.lighting.key.getWorldPosition(this.lightPos)
+    this.lightDir.copy(this.lightPos).sub(this.monolith.mesh.position).normalize()
+    this.monolith.setLightDir(this.lightDir)
+    this.fog.setLightPos(this.lightPos)
+
+    this.fog.update(time.elapsedS, this.camera)
   }
 }
