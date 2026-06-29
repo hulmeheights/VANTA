@@ -14,12 +14,14 @@ interface Keyframe {
   look: [number, number, number]
 }
 
+// p values track the centred-section scroll positions so each beat lands with its
+// content in view (Hero 0 · Work ~0.23 · Capabilities ~0.45 · Studio ~0.68 · Contact 1).
 export const KEYFRAMES: Keyframe[] = [
   { p: 0.0, pos: [0.0, -0.1, 8.6], look: [0.6, 0.7, 0.0] }, // Hero — low, looking up
-  { p: 0.22, pos: [-3.4, 0.2, 5.6], look: [0.3, 0.5, 0.0] }, // Work — swing left, thread in
-  { p: 0.4, pos: [3.6, 0.7, 5.2], look: [0.7, 0.5, 0.0] }, // Work — swing right
-  { p: 0.55, pos: [0.4, 2.7, 6.4], look: [0.9, 0.1, 0.0] }, // Capabilities — rise, look down
-  { p: 0.78, pos: [3.9, 0.9, 5.0], look: [0.5, 0.6, 0.0] }, // Studio — three-quarter, close
+  { p: 0.16, pos: [-3.4, 0.2, 5.6], look: [0.3, 0.5, 0.0] }, // Work — swing left, thread in
+  { p: 0.31, pos: [3.6, 0.7, 5.2], look: [0.7, 0.5, 0.0] }, // Work — swing right
+  { p: 0.46, pos: [0.4, 2.7, 6.4], look: [0.9, 0.1, 0.0] }, // Capabilities — rise, look down
+  { p: 0.68, pos: [3.9, 0.9, 5.0], look: [0.5, 0.6, 0.0] }, // Studio — three-quarter, close
   { p: 1.0, pos: [0.6, 0.3, 12.8], look: [0.8, 0.5, 0.0] }, // Contact — retreat into fog
 ]
 

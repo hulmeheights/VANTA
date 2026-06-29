@@ -7,6 +7,8 @@ import '@fontsource-variable/inter/standard.css'
 import './style.css'
 import { detectQuality } from './core/tier'
 import { Experience } from './core/Experience'
+import { initSections } from './ui/sections'
+import { initForm } from './ui/form'
 
 // Boot: profile the device, then build the experience. A short async wait on
 // detect-gpu lets us avoid initialising heavy passes on weak hardware. If WebGL is
@@ -15,6 +17,10 @@ import { Experience } from './core/Experience'
 async function boot(): Promise<void> {
   const yearEl = document.getElementById('year')
   if (yearEl) yearEl.textContent = String(new Date().getFullYear())
+
+  // DOM content + interactions work regardless of WebGL.
+  initSections()
+  initForm()
 
   const canvas = document.querySelector<HTMLCanvasElement>('#webgl')
   if (!canvas) return
