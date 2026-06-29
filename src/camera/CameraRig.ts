@@ -14,15 +14,18 @@ interface Keyframe {
   look: [number, number, number]
 }
 
-// p values track the centred-section scroll positions so each beat lands with its
-// content in view (Hero 0 · Work ~0.23 · Capabilities ~0.45 · Studio ~0.68 · Contact 1).
+// The journey visits distinct "rooms" of one continuous world, with the monolith as
+// the throughline: monolith → left work-gallery → right capability-plinths →
+// back to the monolith (three-quarter) → retreat into fog.
+// p values track the centred-section scroll positions (Hero 0 · Work ~0.23 ·
+// Capabilities ~0.45 · Studio ~0.68 · Contact 1).
 export const KEYFRAMES: Keyframe[] = [
-  { p: 0.0, pos: [0.0, -0.1, 8.6], look: [0.6, 0.7, 0.0] }, // Hero — low, looking up
-  { p: 0.16, pos: [-3.4, 0.2, 5.6], look: [0.3, 0.5, 0.0] }, // Work — swing left, thread in
-  { p: 0.31, pos: [3.6, 0.7, 5.2], look: [0.7, 0.5, 0.0] }, // Work — swing right
-  { p: 0.46, pos: [0.4, 2.7, 6.4], look: [0.9, 0.1, 0.0] }, // Capabilities — rise, look down
-  { p: 0.68, pos: [3.9, 0.9, 5.0], look: [0.5, 0.6, 0.0] }, // Studio — three-quarter, close
-  { p: 1.0, pos: [0.6, 0.3, 12.8], look: [0.8, 0.5, 0.0] }, // Contact — retreat into fog
+  { p: 0.0, pos: [0.0, -0.1, 8.6], look: [0.6, 0.7, 0.0] }, // Hero — monolith, low + up
+  { p: 0.16, pos: [-3.7, 0.7, 5.0], look: [-2.5, 0.2, -1.0] }, // Work — enter the gallery
+  { p: 0.31, pos: [-1.3, 0.9, 3.4], look: [-2.7, 0.15, -1.4] }, // Work — thread through it
+  { p: 0.46, pos: [2.7, 1.35, 3.0], look: [2.6, -0.35, -1.0] }, // Capabilities — over the plinths
+  { p: 0.68, pos: [4.0, 0.9, 5.0], look: [1.0, 0.5, 0.0] }, // Studio — monolith three-quarter
+  { p: 1.0, pos: [0.6, 0.4, 12.8], look: [0.9, 0.5, 0.0] }, // Contact — retreat into fog
 ]
 
 export class CameraRig {

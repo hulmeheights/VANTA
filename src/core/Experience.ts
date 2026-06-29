@@ -1,5 +1,6 @@
-import { Scene, PerspectiveCamera, Color, FogExp2, WebGLRenderer } from 'three'
+import { Scene, PerspectiveCamera, Color, FogExp2, WebGLRenderer, Vector2 } from 'three'
 import { createRenderer } from './Renderer'
+import { openCaseById } from '../ui/sections'
 import { Sizes } from './Sizes'
 import { Time } from './Time'
 import { palette } from './palette'
@@ -28,6 +29,7 @@ export class Experience {
   /** Damped scroll progress driving the whole experience. */
   private progress = 0
   private pointerX = 0
+  private readonly ndc = new Vector2()
   private raf = 0
 
   // Frame-time monitor → graceful auto-degrade ladder.
@@ -57,16 +59,37 @@ export class Experience {
     this.world.setProgress(0)
 
     this.scroll = new ScrollController()
+    ;(window as unknown as { __vantaDebug?: unknown }).__vantaDebug = () => ({
+      slabs: this.world.workSlabs.debug(this.camera),
+      plinths: this.world.plinths.debug(this.camera),
+    })
 
     window.addEventListener('pointermove', this.onPointer)
+    window.addEventListener('click', this.onClick)
     this.resize()
     window.addEventListener('resize', this.resize)
 
     this.start()
   }
 
+  private setNdc(e: { clientX: number; clientY: number }): void {
+    this.ndc.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1)
+  }
+
   private onPointer = (e: PointerEvent): void => {
     this.pointerX = (e.clientX / window.innerWidth) * 2 - 1
+    // Cursor affordance over a clickable work slab (the pick self-gates to the Work beat).
+    this.setNdc(e)
+    document.body.style.cursor = this.world.workSlabs.pick(this.ndc, this.camera) ? 'pointer' : ''
+  }
+
+  private onClick = (e: MouseEvent): void => {
+    const target = e.target as HTMLElement
+    // Let the DOM list / case panel handle their own clicks.
+    if (target.closest('.work__row') || target.closest('.casepanel')) return
+    this.setNdc(e)
+    const id = this.world.workSlabs.pick(this.ndc, this.camera)
+    if (id) openCaseById(id)
   }
 
   private resize = (): void => {
@@ -92,6 +115,11 @@ export class Experience {
 
       // Zero delta under reduced motion → static film grain (no shimmer).
       this.post.render(this.quality.reducedMotion ? 0 : this.time.deltaS)
+      ;(window as unknown as { __vanta?: unknown }).__vanta = {
+        p: +this.progress.toFixed(3),
+        target: +this.scroll.targetProgress.toFixed(3),
+        cam: this.camera.position.toArray().map((n) => +n.toFixed(2)),
+      }
       this.monitor()
       this.raf = requestAnimationFrame(loop)
     }
@@ -135,6 +163,7 @@ export class Experience {
     cancelAnimationFrame(this.raf)
     window.removeEventListener('resize', this.resize)
     window.removeEventListener('pointermove', this.onPointer)
+    window.removeEventListener('click', this.onClick)
     this.scroll.dispose()
     this.renderer.dispose()
   }

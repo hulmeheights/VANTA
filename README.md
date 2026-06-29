@@ -53,6 +53,9 @@ src/
     Monolith.ts           superquadric geometry + the signature ShaderMaterial
     Lighting.ts           one sodium key light on a boom + tight shadow frustum
     Fog.ts                drifting fbm haze billboards (volumetric stand-in)
+    WorkSlabs.ts          the 3D work gallery: render slabs the camera threads
+    renderTexture.ts      procedural per-discipline "render" thumbnails (canvas)
+    Plinths.ts            four capability plinths w/ live procedural demos
   camera/
     CameraRig.ts          CatmullRom dolly + look-at curves; section anchors → p
     scroll.ts             GSAP ScrollTrigger → normalized progress + side rail
@@ -117,7 +120,6 @@ pmndrs `postprocessing` on a **half‑float** buffer (no banding in a 90 %‑bla
 
 ## Known extension points (deliberately left open)
 
-- **Work slabs & capability plinths in 3D.** The brief’s hard requirements — a work gallery → case studies, and capabilities shown by the scene shifting — are met via the project list + slide‑in case panels and the monolith’s exponent morph + camera rise. The design synthesis also imagined floating render‑slabs the camera threads between and four live mini‑demos on plinths; these are left as a clean extension (add meshes in `world/`, place them along the Work/Capabilities camera beats) rather than risk cluttering the art direction.
 - **True raymarched volumetric fog** as an optional `max` tier (the current fog is fbm billboards — looks volumetric, holds 60 fps).
 - **Font subsetting** to the exact glyphs used (`glyphhanger`) to shave the variable‑font payload further.
 

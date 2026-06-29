@@ -35,12 +35,8 @@ html {
   scroll-behavior: auto; /* camera handles motion; never native smooth-scroll */
 }
 
-html,
 body {
-  height: 100%;
-}
-
-body {
+  min-height: 100%;
   background: var(--bg);
   color: var(--bone);
   font-family: var(--sans);

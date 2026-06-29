@@ -11,6 +11,8 @@ import {
 import { Lighting } from './Lighting'
 import { Monolith, BASE_EXPONENT } from './Monolith'
 import { Fog } from './Fog'
+import { WorkSlabs } from './WorkSlabs'
+import { Plinths } from './Plinths'
 import { palette } from '../core/palette'
 import type { Experience } from '../core/Experience'
 import type { Time } from '../core/Time'
@@ -30,7 +32,10 @@ export class World {
   readonly lighting: Lighting
   readonly monolith: Monolith
   readonly fog: Fog
+  readonly workSlabs: WorkSlabs
+  readonly plinths: Plinths
   private readonly fogColor = new Color(palette.bg)
+  private p = 0
 
   private readonly camera: PerspectiveCamera
   private readonly sceneFog: FogExp2 | null
@@ -66,10 +71,17 @@ export class World {
 
     this.fog = new Fog(exp.quality)
     this.group.add(this.fog.group)
+
+    this.workSlabs = new WorkSlabs()
+    this.group.add(this.workSlabs.group)
+
+    this.plinths = new Plinths(this.monolith)
+    this.group.add(this.plinths.group)
   }
 
   /** Scrub state from the master progress p ∈ [0,1]. */
   setProgress(p: number): void {
+    this.p = p
     // Fog: dense at the ends (Hero / Contact), thinnest at Capabilities.
     const thin = smoothstep(0.32, 0.55, p) * (1 - smoothstep(0.55, 0.74, p))
     const contact = smoothstep(0.85, 1, p)
@@ -112,5 +124,7 @@ export class World {
     this.fog.setLightPos(this.lightPos)
 
     this.fog.update(t, this.camera)
+    this.workSlabs.update(this.p, this.camera)
+    this.plinths.update(this.p, t)
   }
 }

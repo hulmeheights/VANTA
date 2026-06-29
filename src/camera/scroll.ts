@@ -16,16 +16,21 @@ export class ScrollController {
   constructor(onProgress?: (p: number) => void) {
     this.railFill = document.querySelector<HTMLElement>('.rail__fill')
 
+    // start:0 / end:'max' tracks the whole document scroll directly — the robust
+    // idiom for page progress (no trigger-element measurement to get wrong).
     this.trigger = ScrollTrigger.create({
-      trigger: document.documentElement,
-      start: 'top top',
-      end: 'bottom bottom',
+      start: 0,
+      end: 'max',
       onUpdate: (self) => {
         this.targetProgress = self.progress
         if (this.railFill) this.railFill.style.height = `${self.progress * 100}%`
         onProgress?.(self.progress)
       },
     })
+
+    // Content (fonts, built rows) can shift height after construction — remeasure.
+    requestAnimationFrame(() => ScrollTrigger.refresh())
+    window.addEventListener('load', () => ScrollTrigger.refresh())
   }
 
   /** Jump the page to a section anchor (used by reduced-motion / nav). */

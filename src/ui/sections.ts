@@ -143,6 +143,12 @@ function openCase(p: Project): void {
   ;(node.querySelector('.casepanel__close') as HTMLElement)?.focus()
 }
 
+/** Open a case study by project id (used by 3D slab clicks). */
+export function openCaseById(id: string): void {
+  const p = projects.find((x) => x.id === id)
+  if (p) openCase(p)
+}
+
 function closeCase(): void {
   if (!panel) return
   panel.classList.remove('is-open')
