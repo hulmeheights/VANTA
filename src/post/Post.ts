@@ -22,6 +22,7 @@ export class Post {
   readonly bloom?: SelectiveBloomEffect
   readonly dof?: DepthOfFieldEffect
   readonly grade: GradeEffect
+  private dofPass?: EffectPass
 
   constructor(
     renderer: WebGLRenderer,
@@ -44,7 +45,8 @@ export class Post {
         bokehScale: 2.4,
         resolutionScale: 0.5,
       })
-      this.composer.addPass(new EffectPass(camera, this.dof))
+      this.dofPass = new EffectPass(camera, this.dof)
+      this.composer.addPass(this.dofPass)
     }
 
     // ---- Mergeable chain: bloom + tonemap + grade + chromatic aberration ----
@@ -83,6 +85,15 @@ export class Post {
   /** Focus the DOF on a live world-space target (the rig's look point / a slab). */
   setFocusTarget(target: Vector3): void {
     if (this.dof) this.dof.target = target
+  }
+
+  /** Runtime degrade hook: turn the (heaviest) DOF pass off. */
+  disableDof(): boolean {
+    if (this.dofPass && this.dofPass.enabled) {
+      this.dofPass.enabled = false
+      return true
+    }
+    return false
   }
 
   setSize(width: number, height: number): void {

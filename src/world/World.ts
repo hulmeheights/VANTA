@@ -34,6 +34,7 @@ export class World {
 
   private readonly camera: PerspectiveCamera
   private readonly sceneFog: FogExp2 | null
+  private readonly animate: boolean
   private readonly lightPos = new Vector3()
   private readonly lightDir = new Vector3()
 
@@ -46,6 +47,7 @@ export class World {
     exp.scene.add(this.group)
     this.camera = exp.camera
     this.sceneFog = exp.scene.fog instanceof FogExp2 ? exp.scene.fog : null
+    this.animate = !exp.quality.reducedMotion
 
     this.lighting = new Lighting(exp.quality, exp.scene)
 
@@ -90,13 +92,16 @@ export class World {
   }
 
   update(time: Time): void {
-    this.monolith.update(time.elapsedS)
+    // Reduced motion: freeze autonomous time so breath / fog drift / idle hold a
+    // composed still. Scroll-driven camera, fog density and morph still respond.
+    const t = this.animate ? time.elapsedS : 0
+    this.monolith.update(t)
 
     // Smooth the cursor influence; combine scroll base + slow idle drift + cursor.
     this.pointerSmooth += (this.pointerTarget - this.pointerSmooth) * 0.06
-    const idle = Math.sin(time.elapsedS * 0.09) * 0.12
+    const idle = this.animate ? Math.sin(t * 0.09) * 0.12 : 0
     const targetAz = this.scrollAz + idle + this.pointerSmooth * 0.16
-    this.az += (targetAz - this.az) * 0.08
+    this.az += (targetAz - this.az) * (this.animate ? 0.08 : 1)
     this.lighting.update(this.az)
 
     // Feed the monolith's custom shader the live direction toward the key light,
@@ -106,6 +111,6 @@ export class World {
     this.monolith.setLightDir(this.lightDir)
     this.fog.setLightPos(this.lightPos)
 
-    this.fog.update(time.elapsedS, this.camera)
+    this.fog.update(t, this.camera)
   }
 }

@@ -30,6 +30,12 @@ export class Experience {
   private pointerX = 0
   private raf = 0
 
+  // Frame-time monitor → graceful auto-degrade ladder.
+  private frames = 0
+  private fpsClock = performance.now()
+  private slowChecks = 0
+  private degradeStep = 0
+
   constructor(
     readonly canvas: HTMLCanvasElement,
     readonly quality: Quality,
@@ -84,10 +90,45 @@ export class Experience {
       this.world.setPointer(this.pointerX)
       this.world.update(this.time)
 
-      this.post.render(this.time.deltaS)
+      // Zero delta under reduced motion → static film grain (no shimmer).
+      this.post.render(this.quality.reducedMotion ? 0 : this.time.deltaS)
+      this.monitor()
       this.raf = requestAnimationFrame(loop)
     }
     this.raf = requestAnimationFrame(loop)
+  }
+
+  // Sample fps once a second; expose it and demote quality if sustained-slow.
+  private monitor(): void {
+    this.frames++
+    const now = performance.now()
+    const span = now - this.fpsClock
+    if (span < 1000) return
+
+    const fps = (this.frames * 1000) / span
+    this.frames = 0
+    this.fpsClock = now
+    ;(window as unknown as { __vantaFps?: number }).__vantaFps = Math.round(fps)
+
+    if (this.quality.reducedMotion) return
+    this.slowChecks = fps < 45 ? this.slowChecks + 1 : 0
+    if (this.slowChecks >= 2) {
+      this.slowChecks = 0
+      this.degrade()
+    }
+  }
+
+  // Graceful ladder: drop pixel ratio first (cost scales with DPR²), then DOF.
+  private degrade(): void {
+    this.degradeStep++
+    if (this.degradeStep === 1) {
+      const dpr = Math.min(this.renderer.getPixelRatio(), 1.0)
+      this.renderer.setPixelRatio(dpr)
+      this.post.setSize(this.sizes.width, this.sizes.height)
+      console.info(`[VANTA] perf: pixel ratio → ${dpr}`)
+    } else if (this.degradeStep === 2) {
+      if (this.post.disableDof()) console.info('[VANTA] perf: depth of field off')
+    }
   }
 
   dispose(): void {
